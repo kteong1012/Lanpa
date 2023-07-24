@@ -1,0 +1,16 @@
+{
+    "name": "Lanpa.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f954852a021de474eab973da6e17efc5"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
