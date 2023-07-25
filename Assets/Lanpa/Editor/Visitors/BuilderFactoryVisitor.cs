@@ -25,5 +25,10 @@ namespace Lanpa
         {
             return new LDropDownBuilder(a, lDropDownAttribute);
         }
+
+        public LanpaBuilderBase Accept(LMultiDropDownAttribute lMultiDropDownAttribute, MemberInfo a)
+        {
+            return new LMultiDropDownBuilder(a, lMultiDropDownAttribute);
+        }
     }
 }

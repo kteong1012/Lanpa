@@ -84,20 +84,42 @@ namespace Lanpa
             }
         }
 
-        public void Accept(LDropDownBuilder lDropDownBuilder, object a)
+        public void Accept(LDropDownBuilder builder, object target)
         {
-            var memberInfo = lDropDownBuilder.MemberInfo;
+            var memberInfo = builder.MemberInfo;
             //检查是否是枚举类型
             if (!memberInfo.GetMemberType().IsEnum)
             {
-                Debug.LogWarning($"类型：{a.GetType().FullName}构建错误,{memberInfo.Name} 不是一个枚举类型");
+                Debug.LogWarning($"类型：{target.GetType().FullName}构建错误,{memberInfo.Name} 不是一个枚举类型");
                 return;
             }
 
-            var label = lDropDownBuilder.Attribute.label ?? memberInfo.Name;
-            var enumValue = (Enum)memberInfo.GetValue(a);
+            var label = builder.Attribute.label ?? memberInfo.Name;
+            var enumValue = (Enum)memberInfo.GetValue(target);
             enumValue = EditorGUILayout.EnumPopup(label, enumValue);
-            memberInfo.SetValue(a, enumValue);
+            memberInfo.SetValue(target, enumValue);
+        }
+
+        public void Accept(LMultiDropDownBuilder builder, object target)
+        {
+            var memberInfo = builder.MemberInfo;
+            //检查是否是枚举类型
+            if (!memberInfo.GetMemberType().IsEnum)
+            {
+                Debug.LogWarning($"类型：{target.GetType().FullName}构建错误,{memberInfo.Name} 不是一个枚举类型");
+                return;
+            }
+            //检查这个枚举类型是否有Flags特性
+            if (!memberInfo.GetMemberType().IsDefined(typeof(FlagsAttribute), false))
+            {
+                Debug.LogWarning($"类型：{target.GetType().FullName}构建错误,{memberInfo.Name} 不是一个Flags枚举类型");
+                return;
+            }
+
+            var label = builder.Attribute.label ?? memberInfo.Name;
+            var enumValue = (Enum)memberInfo.GetValue(target);
+            enumValue = EditorGUILayout.EnumFlagsField(label, enumValue);
+            memberInfo.SetValue(target, enumValue);
         }
     }
 }

@@ -6,6 +6,7 @@
         void Accept(LCheckBoxBuilder builder, A a);
         void Accept(LTextBuilder builder, A a);
         void Accept(LDropDownBuilder builder, A a);
+        void Accept(LMultiDropDownBuilder lMutiDropDownBuilder, A a);
     }
 
     public interface IBuilderActionVisitor<A, B>
@@ -14,6 +15,7 @@
         void Accept(LCheckBoxBuilder builder, A a, B b);
         void Accept(LTextBuilder builder, A a, B b);
         void Accept(LDropDownBuilder builder, A a, B b);
+        void Accept(LMultiDropDownBuilder lMutiDropDownBuilder, A a, B b);
     }
 
     public interface IBuilderActionVisitor<A, B, C>
@@ -22,6 +24,7 @@
         void Accept(LCheckBoxBuilder builder, A a, B b, C c);
         void Accept(LTextBuilder builder, A a, B b, C c);
         void Accept(LDropDownBuilder builder, A a, B b, C c);
+        void Accept(LMultiDropDownBuilder lMutiDropDownBuilder, A a, B b, C c);
     }
 
     public interface IBuilderActionVisitor<A, B, C, D>
@@ -30,5 +33,6 @@
         void Accept(LCheckBoxBuilder builder, A a, B b, C c, D d);
         void Accept(LTextBuilder builder, A a, B b, C c, D d);
         void Accept(LDropDownBuilder builder, A a, B b, C c, D d);
+        void Accept(LMultiDropDownBuilder lMutiDropDownBuilder, A a, B b, C c, D d);
     }
 }

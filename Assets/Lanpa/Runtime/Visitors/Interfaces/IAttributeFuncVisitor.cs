@@ -12,6 +12,7 @@
         T Accept(LCheckBoxAttribute lCheckBoxAttribute, A a);
         T Accept(LTextAttribute lTextAttribute, A a);
         T Accept(LDropDownAttribute lDropDownAttribute, A a);
+        T Accept(LMultiDropDownAttribute lMultiDropDownAttribute, A a);
     }
     public interface IAttributeFuncVisitor<T, A, B>
     {
@@ -19,6 +20,7 @@
         T Accept(LCheckBoxAttribute lCheckBoxAttribute, A a, B b);
         T Accept(LTextAttribute lTextAttribute, A a, B b);
         T Accept(LDropDownAttribute lDropDownAttribute, A a, B b);
+        T Accept(LMultiDropDownAttribute lMultiDropDownAttribute, A a, B b);
     }
     public interface IAttributeFuncVisitor<T, A, B, C>
     {
@@ -26,6 +28,7 @@
         T Accept(LCheckBoxAttribute lCheckBoxAttribute, A a, B b, C c);
         T Accept(LTextAttribute lTextAttribute, A a, B b, C c);
         T Accept(LDropDownAttribute lDropDownAttribute, A a, B b, C c);
+        T Accept(LMultiDropDownAttribute lMultiDropDownAttribute, A a, B b, C c);
     }
     public interface IAttributeFuncVisitor<T, A, B, C, D>
     {
@@ -33,5 +36,6 @@
         T Accept(LCheckBoxAttribute lCheckBoxAttribute, A a, B b, C c, D d);
         T Accept(LTextAttribute lTextAttribute, A a, B b, C c, D d);
         T Accept(LDropDownAttribute lDropDownAttribute, A a, B b, C c, D d);
+        T Accept(LMultiDropDownAttribute lMultiDropDownAttribute, A a, B b, C c, D d);
     }
 }
