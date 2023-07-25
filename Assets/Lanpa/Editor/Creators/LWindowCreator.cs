@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
@@ -9,6 +10,7 @@ namespace Lanpa
     {
         protected Type _type;
         protected T _target;
+        protected IEnumerable<LanpaBuilderBase> _builders;
 
         private void TryInit()
         {
@@ -20,18 +22,25 @@ namespace Lanpa
             {
                 _type = typeof(T);
             }
+            if (_builders == null)
+            {
+                _builders = _type.GetLanpaMembers()
+                    .OrderByDescending(pair => pair.attribute.order)
+                    .Select(pair => pair.attribute.Apply(BuilderFactoryVisitor.Instance, pair.memberInfo));
+            }
         }
 
         private void OnGUI()
         {
-            TryInit();
-            var members = _type.GetLanpaMembers()
-                .OrderByDescending(pair => pair.attribute.order);
+            DrawWindow();
+        }
 
-            foreach (var (member, attribute) in members)
+        protected virtual void DrawWindow()
+        {
+            TryInit();
+            foreach (var builder in _builders)
             {
-                var builder = attribute.Apply(BuilderFactoryVisitor.Instance, member);
-                builder.Apply(NormalBuilderVisitor.Instance, _target, member);
+                builder.Apply(NormalBuilderVisitor.Instance, _target);
             }
         }
     }
