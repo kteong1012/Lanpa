@@ -10,12 +10,12 @@ namespace Lanpa
         public static IEnumerable<(MemberInfo memberInfo, LanpaAttribute attribute)> GetLanpaMembers(this Type type)
         {
             var members = type.GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            foreach (var member in members)
+            foreach (var memberInfo in members)
             {
-                var attribute = member.GetCustomAttribute<LanpaAttribute>(true);
-                if (attribute != null)
+                var attribute = memberInfo.GetCustomAttribute<LanpaAttribute>(true);
+                if (attribute != null && attribute.Apply(AttributeCheckVisitor.Instance, memberInfo))
                 {
-                    yield return (member, attribute);
+                    yield return (memberInfo, attribute);
                 }
             }
         }

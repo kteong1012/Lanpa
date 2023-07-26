@@ -22,5 +22,15 @@ namespace Lanpa
         public abstract void Apply<A, B, C>(IBuilderActionVisitor<A, B, C> visitor, A a, B b, C c);
 
         public abstract void Apply<A, B, C, D>(IBuilderActionVisitor<A, B, C, D> visitor, A a, B b, C c, D d);
+
+        public abstract T Apply<T>(IBuilderFuncVisitor<T> visitor);
+
+        public abstract T Apply<T, A>(IBuilderFuncVisitor<T, A> visitor, A a);
+
+        public abstract T Apply<T, A, B>(IBuilderFuncVisitor<T, A, B> visitor, A a, B b);
+
+        public abstract T Apply<T, A, B, C>(IBuilderFuncVisitor<T, A, B, C> visitor, A a, B b, C c);
+
+        public abstract T Apply<T, A, B, C, D>(IBuilderFuncVisitor<T, A, B, C, D> visitor, A a, B b, C c, D d);
     }
 }

@@ -35,5 +35,30 @@ namespace Lanpa
         {
             visitor.Accept(this, a, b, c, d);
         }
+
+        public override T Apply<T>(IBuilderFuncVisitor<T> visitor)
+        {
+            return visitor.Accept(this);
+        }
+
+        public override T Apply<T, A>(IBuilderFuncVisitor<T, A> visitor, A a)
+        {
+            return visitor.Accept(this, a);
+        }
+
+        public override T Apply<T, A, B>(IBuilderFuncVisitor<T, A, B> visitor, A a, B b)
+        {
+            return visitor.Accept(this, a, b);
+        }
+
+        public override T Apply<T, A, B, C>(IBuilderFuncVisitor<T, A, B, C> visitor, A a, B b, C c)
+        {
+            return visitor.Accept(this, a, b, c);
+        }
+
+        public override T Apply<T, A, B, C, D>(IBuilderFuncVisitor<T, A, B, C, D> visitor, A a, B b, C c, D d)
+        {
+            return visitor.Accept(this, a, b, c, d);
+        }
     }
 }

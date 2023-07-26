@@ -40,7 +40,7 @@ namespace Lanpa
             TryInit();
             foreach (var builder in _builders)
             {
-                builder.Apply(NormalBuilderVisitor.Instance, _target);
+                builder.Apply(NormalBuildVisitor.Instance, _target);
             }
         }
     }

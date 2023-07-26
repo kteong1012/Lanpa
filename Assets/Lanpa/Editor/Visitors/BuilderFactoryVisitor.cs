@@ -4,7 +4,7 @@ namespace Lanpa
 {
     public class BuilderFactoryVisitor : IAttributeFuncVisitor<LanpaBuilderBase, MemberInfo>
     {
-        public static BuilderFactoryVisitor Instance = new BuilderFactoryVisitor();
+        public static BuilderFactoryVisitor Instance { get; } = new BuilderFactoryVisitor();
 
         public LanpaBuilderBase Accept(LButtonAttribute attribute, MemberInfo memberInfo)
         {
