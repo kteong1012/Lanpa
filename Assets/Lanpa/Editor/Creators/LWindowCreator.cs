@@ -3,14 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
+using UnityEngine;
 
 namespace Lanpa
 {
     public class LWindowCreator<T> : EditorWindow where T : class, new()
     {
+        private class LanpaMemberInfo
+        {
+            public string label;
+            public MemberInfo memberInfo;
+            public LanpaBuilderBase builder;
+        }
         protected Type _type;
         protected T _target;
-        protected IEnumerable<LanpaBuilderBase> _builders;
+        private List<LanpaMemberInfo> _builderInfos;
+        private Vector2 _scrollPos;
 
         private void TryInit()
         {
@@ -22,11 +30,19 @@ namespace Lanpa
             {
                 _type = typeof(T);
             }
-            if (_builders == null)
+            if (_builderInfos == null)
             {
-                _builders = _type.GetLanpaMembers()
+                _builderInfos = _type.GetLanpaMembers()
                     .OrderByDescending(pair => pair.attribute.order)
-                    .Select(pair => pair.attribute.Apply(BuilderFactoryVisitor.Instance, pair.memberInfo));
+                    .Select(pair =>
+                    {
+                        return new LanpaMemberInfo()
+                        {
+                            label = pair.attribute.label ?? pair.memberInfo.Name,
+                            memberInfo = pair.memberInfo,
+                            builder = pair.attribute.Apply(MemberBuilderFactoryVisitor.Instance, pair.memberInfo)
+                        };
+                    }).ToList();
             }
         }
 
@@ -38,10 +54,14 @@ namespace Lanpa
         protected virtual void DrawWindow()
         {
             TryInit();
-            foreach (var builder in _builders)
+            //创建一个和窗口一样高的滚动区域
+            _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos, GUILayout.Width(position.width),
+                               GUILayout.Height(position.height));
+            foreach (var info in _builderInfos)
             {
-                builder.Apply(BuildMemberVisitor.Instance, _target);
+                info.builder.Apply(BuildMemberVisitor.Instance, _target, info.label, info.memberInfo);
             }
+            EditorGUILayout.EndScrollView();
         }
     }
 }

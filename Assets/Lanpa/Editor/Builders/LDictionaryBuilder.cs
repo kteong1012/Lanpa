@@ -6,20 +6,17 @@ namespace Lanpa
 {
     public class LDictionaryBuilder : LanpaBuilderBase
     {
-        public LDictionaryAttribute Attribute { get; }
-        public Type KeyType { get; }
-        public Type ValueType { get; }
-        public List<object> Keys { get; } = new List<object>();
-        public List<object> Values { get; } = new List<object>();
-
-        public LDictionaryBuilder(MemberInfo memberInfo, LDictionaryAttribute attribute) : base(memberInfo)
+        public LDictionaryBuilder(Type type, int order = 0) : base(type, order)
         {
-            Attribute = attribute;
-            KeyType = memberInfo.GetMemberType().GetGenericArguments()[0];
-            ValueType = memberInfo.GetMemberType().GetGenericArguments()[1];
+            var keyType = type.GetGenericArguments()[0];
+            var valueType = type.GetGenericArguments()[1];
+            KeyBuilder = LanpaEditorUtils.CreateElementBuilder(keyType);
+            ValueBuilder = LanpaEditorUtils.CreateElementBuilder(valueType);
         }
-
-        public override int Order => Attribute.order;
+        public LanpaBuilderBase KeyBuilder { get; }
+        public LanpaBuilderBase ValueBuilder { get; }
+        public List<object> Keys { get; set; }
+        public List<object> Values { get; set; }
 
         public override void Apply<A>(IBuilderActionVisitor<A> visitor, A a)
         {

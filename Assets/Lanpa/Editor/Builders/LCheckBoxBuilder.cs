@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,13 +7,8 @@ namespace Lanpa
 {
     public class LCheckBoxBuilder : LanpaBuilderBase
     {
-        public override int Order => Attribute.order;
-
-        public LCheckBoxAttribute Attribute { get; }
-
-        public LCheckBoxBuilder(MemberInfo memberInfo, LCheckBoxAttribute lCheckBoxAttribute) : base(memberInfo)
+        public LCheckBoxBuilder(Type type, int order = 0) : base(type, order)
         {
-            Attribute = lCheckBoxAttribute;
         }
 
         public override void Apply<A>(IBuilderActionVisitor<A> visitor, A a)

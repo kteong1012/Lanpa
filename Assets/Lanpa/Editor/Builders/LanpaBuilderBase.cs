@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -6,14 +7,15 @@ namespace Lanpa
 {
     public abstract class LanpaBuilderBase
     {
-        public MemberInfo MemberInfo { get; }
+        public Type Type { get; }
+        public int Order { get; }
 
-        public LanpaBuilderBase(MemberInfo memberInfo)
+        public LanpaBuilderBase(Type type,int order)
         {
-            MemberInfo = memberInfo;
+            Type = type;
+            Order = order;
         }
 
-        public abstract int Order { get; }
 
         public abstract void Apply<A>(IBuilderActionVisitor<A> visitor, A a);
 

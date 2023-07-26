@@ -37,9 +37,25 @@ public class TestDesigner
     [LCheckBox(label = "显示", order = 11)]
     private bool isShow = false;
 
+    [LDictionary(label = "字典", order = 15)]
+    private Dictionary<int, Dictionary<string, bool>> dic = new Dictionary<int, Dictionary<string, bool>>
+    {
+        { 1, new Dictionary<string, bool> { { "a", true }, { "b", false },{"x",false },{ "y",false} } },
+        { 2, new Dictionary<string, bool> { { "c", true }, { "d", false } } },
+    };
+
     [LButton("测试")]
     private void Test()
     {
         Debug.Log($"{_record}   {isShow}   {test}  {testEnum}");
+        //打印dic
+        foreach (var item in dic)
+        {
+            Debug.Log(item.Key);
+            foreach (var item2 in item.Value)
+            {
+                Debug.Log($"{item2.Key}  {item2.Value}");
+            }
+        }
     }
 }

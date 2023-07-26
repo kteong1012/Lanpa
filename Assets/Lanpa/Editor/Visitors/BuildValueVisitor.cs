@@ -1,60 +1,126 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
 namespace Lanpa
 {
-    public class BuildValueVisitor : IBuilderActionVisitor<object,int>
+    public class BuildValueVisitor : IBuilderFuncVisitor<object, object, int>
     {
         public static BuildValueVisitor Instance { get; } = new BuildValueVisitor();
-        public void Accept(LButtonBuilder builder, object target,int depth)
+        public object Accept(LButtonBuilder builder, object value, int depth)
         {
             throw new NotSupportedException();
         }
 
-        public void Accept(LCheckBoxBuilder builder, object target,int depth)
+        public object Accept(LCheckBoxBuilder builder, object value, int depth)
         {
-            var memberInfo = builder.MemberInfo;
+            var b = false;
+            if (value != null)
+            {
+                b = (bool)value;
+            }
             //绘制toggle
-            var value = EditorGUILayout.Toggle((bool)memberInfo.GetValue(target));
-            memberInfo.SetValue(target, value);
+            return EditorGUILayout.Toggle(b);
         }
 
-        public void Accept(LTextBuilder builder, object target,int depth)
+        public object Accept(LTextBuilder builder, object value, int depth)
         {
-            var memberInfo = builder.MemberInfo;
-            if (builder.Attribute.inputText)
+            if (builder.InputText)
             {
-                var text = EditorGUILayout.TextField(memberInfo.GetValue(target).ToString());
-                memberInfo.SetValue(target, LanpaUtils.Convert(memberInfo.GetMemberType(), text));
+                //如果输入框还在焦点就返回原值
+                GUI.SetNextControlName(builder.GetHashCode().ToString());
+                var text = EditorGUILayout.TextField(value?.ToString());
+                return LanpaUtils.Convert(builder.Type, text);
             }
             else
             {
-                EditorGUILayout.LabelField(memberInfo.GetValue(target).ToString());
+                EditorGUILayout.LabelField(value?.ToString());
+                return value;
             }
         }
 
-        public void Accept(LDropDownBuilder builder, object target,int depth)
+        public object Accept(LDropDownBuilder builder, object value, int depth)
         {
-            var memberInfo = builder.MemberInfo;
-            var enumValue = (Enum)memberInfo.GetValue(target);
+            Enum.GetValues(builder.Type);
+            var enumValue = value == null ? (Enum)Enum.GetValues(builder.Type).GetValue(0) : (Enum)value;
+
             enumValue = EditorGUILayout.EnumPopup(enumValue);
-            memberInfo.SetValue(target, enumValue);
+            return enumValue;
         }
 
-        public void Accept(LMultiDropDownBuilder builder, object target,int depth)
+        public object Accept(LMultiDropDownBuilder builder, object value, int depth)
         {
-            var memberInfo = builder.MemberInfo;
-            var enumValue = (Enum)memberInfo.GetValue(target);
+            var enumValue = value == null ? (Enum)Enum.GetValues(builder.Type).GetValue(0) : (Enum)value;
             enumValue = EditorGUILayout.EnumFlagsField(enumValue);
-            memberInfo.SetValue(target, enumValue);
+            return enumValue;
         }
 
-        public void Accept(LDictionaryBuilder builder, object target,int depth)
+        public object Accept(LDictionaryBuilder builder, object value, int depth)
         {
-            //反射获取字典的Keys和Values
-            var memberInfo = builder.MemberInfo;
+            var dict = value == null ? (IDictionary)Activator.CreateInstance(builder.Type) : (IDictionary)value;
+            if (builder.Keys == null || builder.Values == null)
+            {
+                builder.Keys = new List<object>();
+                builder.Values = new List<object>();
+
+                var iter = dict.GetEnumerator();
+                while (iter.MoveNext())
+                {
+                    builder.Keys.Add(iter.Key);
+                    builder.Values.Add(iter.Value);
+                }
+            }
+            //获取Keys的所有重复项
+            var duplicateKeys = builder.Keys.Select((element, index) => new { Element = element, Index = index })
+                            .GroupBy(item => item.Element)
+                            .Where(group => group.Count() > 1)
+                            .SelectMany(group => group.Skip(1).Select(item => item.Index))
+                            .ToList();
+            EditorGUILayout.BeginVertical();
+            for (int i = 0; i < builder.Keys.Count; i++)
+            {
+                EditorGUILayout.BeginHorizontal();
+                if (duplicateKeys.Contains(i))
+                {
+                    GUI.color = Color.red;
+                }
+                builder.Keys[i] = builder.KeyBuilder.Apply(this, builder.Keys[i], depth + 1);
+                GUI.color = Color.white;
+                if (GUILayout.Button("-", GUILayout.Width(25), GUILayout.Height(25)))
+                {
+                    builder.Keys.RemoveAt(i);
+                    builder.Values.RemoveAt(i);
+                    i--;
+                }
+                builder.Values[i] = builder.ValueBuilder.Apply(this, builder.Values[i], depth + 1);
+                EditorGUILayout.EndHorizontal();
+            }
+            if (GUILayout.Button("+", GUILayout.Width(25), GUILayout.Height(25)))
+            {
+                builder.Keys.Add(null);
+                builder.Values.Add(null);
+            }
+            EditorGUILayout.EndVertical();
+            //用linq判断keys有没有重复项
+            if (builder.Keys.Count != builder.Keys.Distinct().Count())
+            {
+                return dict;
+            }
+            dict.Clear();
+            for (int i = 0; i < builder.Keys.Count; i++)
+            {
+                if (builder.Keys[i] == null)
+                {
+                    continue;
+                }
+                dict.Add(builder.Keys[i], builder.Values[i]);
+            }
+            return dict;
         }
     }
 }

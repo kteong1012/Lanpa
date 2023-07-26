@@ -5,15 +5,8 @@ namespace Lanpa
 {
     public class LDropDownBuilder : LanpaBuilderBase
     {
-        public override int Order => Attribute.order;
-
-        public LDropDownAttribute Attribute { get; }
-
-        public Type EnumType => MemberInfo.GetMemberType();
-
-        public LDropDownBuilder(MemberInfo memberInfo, LDropDownAttribute lDropDownAttribute) : base(memberInfo)
+        public LDropDownBuilder(Type type, int order = 0) : base(type, order)
         {
-            Attribute = lDropDownAttribute;
         }
 
         public override void Apply<A>(IBuilderActionVisitor<A> visitor, A a)

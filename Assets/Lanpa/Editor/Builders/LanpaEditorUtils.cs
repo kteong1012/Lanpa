@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Lanpa
@@ -41,6 +42,38 @@ namespace Lanpa
             {
                 propertyInfo.SetValue(target, value);
             }
+        }
+
+        public static LanpaBuilderBase CreateElementBuilder(Type type)
+        {
+            if (LanpaUtils.IsBaseType(type))
+            {
+                return new LTextBuilder(type);
+            }
+            if (type.IsEnum)
+            {
+                if (type.GetCustomAttribute<FlagsAttribute>() != null)
+                {
+                    return new LMultiDropDownBuilder(type);
+                }
+                else
+                {
+                    return new LDropDownBuilder(type);
+                }
+            }
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+            {
+                return new LDictionaryBuilder(type);
+            }
+            //if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
+            //{
+            //    return new LListBuilder(type);
+            //}
+            if (type == typeof(bool))
+            {
+                return new LCheckBoxBuilder(type);
+            }
+            return null;
         }
     }
 }

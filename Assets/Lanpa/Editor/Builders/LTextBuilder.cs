@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,14 +7,12 @@ namespace Lanpa
 {
     public class LTextBuilder : LanpaBuilderBase
     {
-        public override int Order => Attribute.order;
-
-        public LTextAttribute Attribute { get; }
-
-        public LTextBuilder(MemberInfo memberInfo, LTextAttribute lTextAttribute) : base(memberInfo)
+        public LTextBuilder(Type type, int order = 0, bool inputText = true) : base(type, order)
         {
-            Attribute = lTextAttribute;
+            InputText = inputText;
         }
+
+        public bool InputText { get; }
 
         public override void Apply<A>(IBuilderActionVisitor<A> visitor, A a)
         {

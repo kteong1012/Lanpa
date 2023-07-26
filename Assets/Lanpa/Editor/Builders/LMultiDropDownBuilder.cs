@@ -1,17 +1,13 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace Lanpa
 {
     public class LMultiDropDownBuilder : LanpaBuilderBase
     {
-        public LMultiDropDownAttribute Attribute { get; }
-
-        public LMultiDropDownBuilder(MemberInfo memberInfo, LMultiDropDownAttribute attribute) : base(memberInfo)
+        public LMultiDropDownBuilder(Type type, int order = 0) : base(type, order)
         {
-            Attribute = attribute;
         }
-
-        public override int Order => Attribute.order;
 
         public override void Apply<A>(IBuilderActionVisitor<A> visitor, A a)
         {

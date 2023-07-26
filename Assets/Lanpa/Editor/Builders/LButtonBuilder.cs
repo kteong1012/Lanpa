@@ -7,15 +7,12 @@ namespace Lanpa
 {
     public class LButtonBuilder : LanpaBuilderBase
     {
-        public LButtonAttribute Attribute { get; }
-
-        public override int Order => Attribute.order;
-
-        public LButtonBuilder(MemberInfo member, LButtonAttribute attribute) : base(member)
+        public LButtonBuilder(Type type, MethodInfo method, int order = 0) : base(type, order)
         {
-            Attribute = attribute;
+            MethodInfo = method;
         }
 
+        public MethodInfo MethodInfo { get; }
 
         public override void Apply<A>(IBuilderActionVisitor<A> visitor, A a)
         {
