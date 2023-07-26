@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Lanpa
 {
-    internal static class LanpaExt
+    internal static class LanpaEditorUtils
     {
         public static object GetValue(this MemberInfo memberInfo, object target)
         {

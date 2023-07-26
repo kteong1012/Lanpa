@@ -3,8 +3,13 @@
 namespace Lanpa
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class LDropDownAttribute : LanpaAttribute
+    public class LDictionaryAttribute : LanpaAttribute
     {
+        public LDictionaryAttribute(string label = null)
+        {
+            this.label = label;
+        }
+
         public override T Apply<T, A>(IAttributeFuncVisitor<T, A> visitor, A a)
         {
             return visitor.Accept(this, a);

@@ -30,5 +30,10 @@ namespace Lanpa
         {
             return new LMultiDropDownBuilder(a, lMultiDropDownAttribute);
         }
+
+        public LanpaBuilderBase Accept(LDictionaryAttribute attribute, MemberInfo a)
+        {
+            return new LDictionaryBuilder(a, attribute);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -86,6 +87,17 @@ namespace Lanpa
             if (!memberInfo.GetMemberType().IsDefined(typeof(FlagsAttribute), false))
             {
                 Debug.LogWarning($"构建错误,{memberInfo.Name} 不是一个Flags枚举类型");
+                return false;
+            }
+            return true;
+        }
+
+        public bool Accept(LDictionaryAttribute attribute, MemberInfo memberInfo)
+        {
+            //检查是否是字典类型
+            if (!memberInfo.GetMemberType().IsGenericType || memberInfo.GetMemberType().GetGenericTypeDefinition() != typeof(Dictionary<,>))
+            {
+                Debug.LogWarning($"构建错误,{memberInfo.Name} 不是一个字典类型");
                 return false;
             }
             return true;

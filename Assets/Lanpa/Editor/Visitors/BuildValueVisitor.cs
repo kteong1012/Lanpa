@@ -5,15 +5,15 @@ using UnityEngine;
 
 namespace Lanpa
 {
-    public class NormalValueBuildVisitor : IBuilderActionVisitor<object>
+    public class BuildValueVisitor : IBuilderActionVisitor<object,int>
     {
-        public static NormalValueBuildVisitor Instance { get; } = new NormalValueBuildVisitor();
-        public void Accept(LButtonBuilder builder, object target)
+        public static BuildValueVisitor Instance { get; } = new BuildValueVisitor();
+        public void Accept(LButtonBuilder builder, object target,int depth)
         {
             throw new NotSupportedException();
         }
 
-        public void Accept(LCheckBoxBuilder builder, object target)
+        public void Accept(LCheckBoxBuilder builder, object target,int depth)
         {
             var memberInfo = builder.MemberInfo;
             //绘制toggle
@@ -21,7 +21,7 @@ namespace Lanpa
             memberInfo.SetValue(target, value);
         }
 
-        public void Accept(LTextBuilder builder, object target)
+        public void Accept(LTextBuilder builder, object target,int depth)
         {
             var memberInfo = builder.MemberInfo;
             if (builder.Attribute.inputText)
@@ -35,7 +35,7 @@ namespace Lanpa
             }
         }
 
-        public void Accept(LDropDownBuilder builder, object target)
+        public void Accept(LDropDownBuilder builder, object target,int depth)
         {
             var memberInfo = builder.MemberInfo;
             var enumValue = (Enum)memberInfo.GetValue(target);
@@ -43,12 +43,18 @@ namespace Lanpa
             memberInfo.SetValue(target, enumValue);
         }
 
-        public void Accept(LMultiDropDownBuilder builder, object target)
+        public void Accept(LMultiDropDownBuilder builder, object target,int depth)
         {
             var memberInfo = builder.MemberInfo;
             var enumValue = (Enum)memberInfo.GetValue(target);
             enumValue = EditorGUILayout.EnumFlagsField(enumValue);
             memberInfo.SetValue(target, enumValue);
+        }
+
+        public void Accept(LDictionaryBuilder builder, object target,int depth)
+        {
+            //反射获取字典的Keys和Values
+            var memberInfo = builder.MemberInfo;
         }
     }
 }

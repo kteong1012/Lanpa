@@ -1,13 +1,14 @@
 using System;
+using System.Collections;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
 namespace Lanpa
 {
-    public class NormalBuildVisitor : IBuilderActionVisitor<object>
+    public class BuildMemberVisitor : IBuilderActionVisitor<object>
     {
-        public static NormalBuildVisitor Instance { get; } = new NormalBuildVisitor();
+        public static BuildMemberVisitor Instance { get; } = new BuildMemberVisitor();
         public void Accept(LButtonBuilder builder, object target)
         {
             var methodInfo = builder.MemberInfo as MethodInfo;
@@ -62,6 +63,23 @@ namespace Lanpa
             var enumValue = (Enum)memberInfo.GetValue(target);
             enumValue = EditorGUILayout.EnumFlagsField(label, enumValue);
             memberInfo.SetValue(target, enumValue);
+        }
+
+        public void Accept(LDictionaryBuilder builder, object target)
+        {
+            //反射获取字典的Keys和Values
+            var memberInfo = builder.MemberInfo;
+            var label = builder.Attribute.label ?? memberInfo.Name;
+            var dict = (IDictionary)memberInfo.GetValue(target);
+            builder.Keys.Clear();
+            builder.Values.Clear();
+            var iter = dict.GetEnumerator();
+            while (iter.MoveNext())
+            {
+                EditorGUILayout.BeginHorizontal();
+                
+                EditorGUILayout.EndHorizontal();
+            }
         }
     }
 }

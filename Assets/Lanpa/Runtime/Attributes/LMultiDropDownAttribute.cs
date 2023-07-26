@@ -1,5 +1,8 @@
-﻿namespace Lanpa
+﻿using System;
+
+namespace Lanpa
 {
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class LMultiDropDownAttribute : LanpaAttribute
     {
         public override T Apply<T, A>(IAttributeFuncVisitor<T, A> visitor, A a)
