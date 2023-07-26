@@ -54,6 +54,13 @@ namespace Lanpa
         protected virtual void DrawWindow()
         {
             TryInit();
+            if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
+            {
+                GUI.FocusControl(null);
+                EditorGUI.FocusTextInControl(null);
+                GUI.FocusWindow(GetHashCode());
+                Repaint();
+            }
             //创建一个和窗口一样高的滚动区域
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos, GUILayout.Width(position.width),
                                GUILayout.Height(position.height));
