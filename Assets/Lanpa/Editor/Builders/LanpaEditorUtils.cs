@@ -73,6 +73,11 @@ namespace Lanpa
             {
                 return new LCheckBoxBuilder(type);
             }
+            //UnityObject
+            if (typeof(UnityEngine.Object).IsAssignableFrom(type))
+            {
+                return new LUnityObjectBuilder(type, 0, false);
+            }
             return null;
         }
     }

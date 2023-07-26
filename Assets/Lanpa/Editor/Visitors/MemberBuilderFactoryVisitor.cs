@@ -35,5 +35,10 @@ namespace Lanpa
         {
             return new LDictionaryBuilder(memberInfo.GetMemberType(), attribute.order);
         }
+
+        public LanpaBuilderBase Accept(LUnityObjectAttribute attribute, MemberInfo memberInfo)
+        {
+            return new LUnityObjectBuilder(memberInfo.GetMemberType(), attribute.order, attribute.allowSceneObject);
+        }
     }
 }

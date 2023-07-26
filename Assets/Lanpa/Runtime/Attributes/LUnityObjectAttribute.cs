@@ -1,18 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System;
 
 namespace Lanpa
 {
-
-    [AttributeUsage(AttributeTargets.Method)]
-    public class LButtonAttribute : LanpaAttribute
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public class LUnityObjectAttribute : LanpaAttribute
     {
-        public LButtonAttribute(string label = null)
+        public bool allowSceneObject;
+
+        public LUnityObjectAttribute(string label = null, bool allowSceneObject = false)
         {
             this.label = label;
+            this.allowSceneObject = allowSceneObject;
         }
+
 
         public override T Apply<T, A>(IAttributeFuncVisitor<T, A> visitor, A a)
         {

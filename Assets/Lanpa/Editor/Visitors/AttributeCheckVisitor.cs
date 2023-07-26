@@ -102,5 +102,16 @@ namespace Lanpa
             }
             return true;
         }
+
+        public bool Accept(LUnityObjectAttribute attribute, MemberInfo memberInfo)
+        {
+            //检查是否是UnityObject类型
+            if (!memberInfo.GetMemberType().IsSubclassOf(typeof(UnityEngine.Object)))
+            {
+                Debug.LogWarning($"构建错误,{memberInfo.Name} 不是一个UnityObject类型");
+                return false;
+            }
+            return true;
+        }
     }
 }

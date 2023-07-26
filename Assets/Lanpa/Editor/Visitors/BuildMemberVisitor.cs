@@ -65,5 +65,12 @@ namespace Lanpa
             EditorGUILayout.EndHorizontal();
             memberInfo.SetValue(target, dict);
         }
+
+        public void Accept(LUnityObjectBuilder builder, object target, string label, MemberInfo memberInfo)
+        {
+            var obj = target == null ? null : (UnityEngine.Object)memberInfo.GetValue(target);
+            obj = EditorGUILayout.ObjectField(label, obj, memberInfo.GetMemberType(), true);
+            memberInfo.SetValue(target, obj);
+        }
     }
 }

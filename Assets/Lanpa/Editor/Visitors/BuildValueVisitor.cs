@@ -122,5 +122,12 @@ namespace Lanpa
             }
             return dict;
         }
+
+        public object Accept(LUnityObjectBuilder builder, object value, int depth)
+        {
+            var obj = value == null ? null : (UnityEngine.Object)value;
+            obj = EditorGUILayout.ObjectField(obj, builder.Type, true);
+            return obj;
+        }
     }
 }

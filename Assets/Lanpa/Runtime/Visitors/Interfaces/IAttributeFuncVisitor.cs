@@ -14,6 +14,7 @@
         T Accept(LDropDownAttribute attribute, A a);
         T Accept(LMultiDropDownAttribute attribute, A a);
         T Accept(LDictionaryAttribute attribute, A a);
+        T Accept(LUnityObjectAttribute attribute, A a);
     }
     public interface IAttributeFuncVisitor<T, A, B>
     {
@@ -23,7 +24,7 @@
         T Accept(LDropDownAttribute attribute, A a, B b);
         T Accept(LMultiDropDownAttribute attribute, A a, B b);
         T Accept(LDictionaryAttribute attribute, A a, B b);
-
+        T Accept(LUnityObjectAttribute attribute, A a, B b);
     }
     public interface IAttributeFuncVisitor<T, A, B, C>
     {
@@ -33,6 +34,7 @@
         T Accept(LDropDownAttribute attribute, A a, B b, C c);
         T Accept(LMultiDropDownAttribute attribute, A a, B b, C c);
         T Accept(LDictionaryAttribute attribute, A a, B b, C c);
+        T Accept(LUnityObjectAttribute attribute, A a, B b, C c);
     }
     public interface IAttributeFuncVisitor<T, A, B, C, D>
     {
@@ -42,5 +44,6 @@
         T Accept(LDropDownAttribute attribute, A a, B b, C c, D d);
         T Accept(LMultiDropDownAttribute attribute, A a, B b, C c, D d);
         T Accept(LDictionaryAttribute attribute, A a, B b, C c, D d);
+        T Accept(LUnityObjectAttribute attribute, A a, B b, C c, D d);
     }
 }

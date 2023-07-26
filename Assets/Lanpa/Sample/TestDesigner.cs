@@ -43,6 +43,11 @@ public class TestDesigner
         { 1, new Dictionary<string, bool> { { "a", true }, { "b", false },{"x",false },{ "y",false} } },
         { 2, new Dictionary<string, bool> { { "c", true }, { "d", false } } },
     };
+    [LDictionary(label = "字典", order = 15)]
+    private Dictionary<int, Dictionary<string, GameObject>> dicObj = new();
+
+    [LUnityObject(label = "物体", order = 16, allowSceneObject = true)]
+    private GameObject obj;
 
     [LButton("测试")]
     private void Test()
