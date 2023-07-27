@@ -12,6 +12,16 @@ namespace Lanpa
     public class BuildValueVisitor : IBuilderFuncVisitor<object, object, int>
     {
         public static BuildValueVisitor Instance { get; } = new BuildValueVisitor();
+        private GUIStyle _boxStyle;
+
+        private BuildValueVisitor()
+        {
+            _boxStyle = new GUIStyle(GUI.skin.box);
+            _boxStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/node1.png") as Texture2D;
+            _boxStyle.normal.textColor = Color.white;
+            _boxStyle.padding = new RectOffset(10, 10, 10, 10);
+
+        }
         public object Accept(LButtonBuilder builder, object value, int depth)
         {
             throw new NotSupportedException();
@@ -81,7 +91,8 @@ namespace Lanpa
                             .Where(group => group.Count() > 1)
                             .SelectMany(group => group.Skip(1).Select(item => item.Index))
                             .ToList();
-            EditorGUILayout.BeginVertical();
+            //加底框，灰色边框线
+            EditorGUILayout.BeginVertical(_boxStyle);
             for (int i = 0; i < builder.Keys.Count; i++)
             {
                 EditorGUILayout.BeginHorizontal();
@@ -133,7 +144,7 @@ namespace Lanpa
         public object Accept(LSerializedObjectBuilder builder, object value, int depth)
         {
             var obj = value ?? Activator.CreateInstance(builder.Type);
-            EditorGUILayout.BeginVertical();
+            EditorGUILayout.BeginVertical(_boxStyle);
             foreach (var (label, memberInfo, fieldBuilder) in builder.Builders)
             {
                 EditorGUILayout.BeginHorizontal();
@@ -164,7 +175,7 @@ namespace Lanpa
                         }
                     }
                 }
-                EditorGUILayout.BeginVertical();
+                EditorGUILayout.BeginVertical(_boxStyle);
                 for (int i = 0; i < builder.Elements.Count; i++)
                 {
                     EditorGUILayout.BeginHorizontal();
@@ -211,7 +222,7 @@ namespace Lanpa
                         }
                     }
                 }
-                EditorGUILayout.BeginVertical();
+                EditorGUILayout.BeginVertical(_boxStyle);
                 for (int i = 0; i < builder.Elements.Count; i++)
                 {
                     EditorGUILayout.BeginHorizontal();
