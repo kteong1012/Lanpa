@@ -23,7 +23,7 @@ namespace Lanpa
         {
             if (_target == null)
             {
-                _target = new T();
+                _target = target as T;
             }
             if (_type == null)
             {
