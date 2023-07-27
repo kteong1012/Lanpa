@@ -11,5 +11,10 @@ namespace Lanpa
             var window = GetWindow<TestWindow>();
             window.Show();
         }
+
+        protected override TestDesigner LoadTarget()
+        {
+            return new TestDesigner();
+        }
     }
 }

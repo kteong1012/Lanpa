@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Lanpa
 {
-    public class LInspectorCreator<T> : Editor where T : class, new()
+    public class LInspectorCreator<T> : Editor where T : Component
     {
         private class LanpaMemberInfo
         {

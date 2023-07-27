@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Lanpa
 {
-    public class LWindowCreator<T> : EditorWindow where T : class, new()
+    public abstract class LWindowCreator<T> : EditorWindow
     {
         private class LanpaMemberInfo
         {
@@ -24,7 +24,7 @@ namespace Lanpa
         {
             if (_target == null)
             {
-                _target = new T();
+                _target = LoadTarget();
             }
             if (_type == null)
             {
@@ -35,6 +35,8 @@ namespace Lanpa
                 _builder = new LSerializedObjectBuilder(_type);
             }
         }
+
+        protected abstract T LoadTarget();
 
         private void OnGUI()
         {
