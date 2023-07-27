@@ -124,5 +124,20 @@ namespace Lanpa
             }
             return true;
         }
+
+        public bool Accept(LListAttribute attribute, MemberInfo memberInfo)
+        {
+            //检查是否是List<>或者数组类型
+            if (memberInfo.GetMemberType().IsGenericType && memberInfo.GetMemberType().GetGenericTypeDefinition() == typeof(List<>))
+            {
+                return true;
+            }
+            if (memberInfo.GetMemberType().IsArray)
+            {
+                return true;
+            }
+            Debug.LogWarning($"构建错误,{memberInfo.Name} 不是一个List<>或者数组类型");
+            return false;
+        }
     }
 }

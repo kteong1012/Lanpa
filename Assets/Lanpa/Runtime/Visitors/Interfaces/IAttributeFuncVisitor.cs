@@ -16,6 +16,7 @@
         T Accept(LDictionaryAttribute attribute, A a);
         T Accept(LUnityObjectAttribute attribute, A a);
         T Accept(LSerializedObjectAttribute attribute, A a);
+        T Accept(LListAttribute attribute, A a);
     }
     public interface IAttributeFuncVisitor<T, A, B>
     {
@@ -27,6 +28,7 @@
         T Accept(LDictionaryAttribute attribute, A a, B b);
         T Accept(LUnityObjectAttribute attribute, A a, B b);
         T Accept(LSerializedObjectAttribute attribute, A a, B b);
+        T Accept(LListAttribute attribute, A a, B b);
     }
     public interface IAttributeFuncVisitor<T, A, B, C>
     {
@@ -38,6 +40,7 @@
         T Accept(LDictionaryAttribute attribute, A a, B b, C c);
         T Accept(LUnityObjectAttribute attribute, A a, B b, C c);
         T Accept(LSerializedObjectAttribute attribute, A a, B b, C c);
+        T Accept(LListAttribute attribute, A a, B b, C c);
     }
     public interface IAttributeFuncVisitor<T, A, B, C, D>
     {
@@ -49,5 +52,6 @@
         T Accept(LDictionaryAttribute attribute, A a, B b, C c, D d);
         T Accept(LUnityObjectAttribute attribute, A a, B b, C c, D d);
         T Accept(LSerializedObjectAttribute attribute, A a, B b, C c, D d);
+        T Accept(LListAttribute attribute, A a, B b, C c, D d);
     }
 }

@@ -143,5 +143,110 @@ namespace Lanpa
             EditorGUILayout.EndVertical();
             return obj;
         }
+
+        public object Accept(LListBuilder builder, object value, int depth)
+        {
+            if (builder.IsArray)
+            {
+                var array = (Array)value;
+                if (value == null)
+                {
+                    array = Array.CreateInstance(builder.Type.GetElementType(), 0);
+                }
+                if (builder.Elements == null)
+                {
+                    builder.Elements = new List<object>();
+                    if (value != null)
+                    {
+                        for (int i = 0; i < array.Length; i++)
+                        {
+                            builder.Elements.Add(array.GetValue(i));
+                        }
+                    }
+                }
+                EditorGUILayout.BeginVertical();
+                for (int i = 0; i < builder.Elements.Count; i++)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    //显示索引[i]
+                    EditorGUILayout.LabelField($"[{i}]", GUILayout.Width(25));
+                    builder.Elements[i] = builder.ElementBuilder.Apply(this, builder.Elements[i], depth + 1);
+                    if (GUILayout.Button("-", GUILayout.Width(25), GUILayout.Height(25)))
+                    {
+                        builder.Elements.RemoveAt(i);
+                        i--;
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+                if (GUILayout.Button("+", GUILayout.Width(25), GUILayout.Height(25)))
+                {
+                    builder.Elements.Add(null);
+                }
+                EditorGUILayout.EndVertical();
+                if (builder.Elements.Count != array.Length)
+                {
+                    array = Array.CreateInstance(builder.Type.GetElementType(), builder.Elements.Count);
+                }
+                for (int i = 0; i < builder.Elements.Count; i++)
+                {
+                    array.SetValue(builder.Elements[i], i);
+                }
+                return array;
+            }
+            else
+            {
+                var list = (IList)value;
+                if (value == null)
+                {
+                    list = (IList)Activator.CreateInstance(builder.Type);
+                }
+                if (builder.Elements == null)
+                {
+                    builder.Elements = new List<object>();
+                    if (value != null)
+                    {
+                        for (int i = 0; i < list.Count; i++)
+                        {
+                            builder.Elements.Add(list[i]);
+                        }
+                    }
+                }
+                EditorGUILayout.BeginVertical();
+                for (int i = 0; i < builder.Elements.Count; i++)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    //显示索引[i]
+                    EditorGUILayout.LabelField($"[{i}]", GUILayout.Width(25));
+                    builder.Elements[i] = builder.ElementBuilder.Apply(this, builder.Elements[i], depth + 1);
+                    if (GUILayout.Button("-", GUILayout.Width(25), GUILayout.Height(25)))
+                    {
+                        builder.Elements.RemoveAt(i);
+                        i--;
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+                if (GUILayout.Button("+", GUILayout.Width(25), GUILayout.Height(25)))
+                {
+                    builder.Elements.Add(null);
+                }
+                EditorGUILayout.EndVertical();
+                if (builder.Elements.Count != list.Count)
+                {
+                    list.Clear();
+                    for (int i = 0; i < builder.Elements.Count; i++)
+                    {
+                        list.Add(builder.Elements[i]);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < builder.Elements.Count; i++)
+                    {
+                        list[i] = builder.Elements[i];
+                    }
+                }
+                return list;
+            }
+        }
     }
 }

@@ -49,6 +49,12 @@ public class TestDesigner
     [LUnityObject(label = "物体", order = 16, allowSceneObject = true)]
     private GameObject obj;
 
+    [LList("测试List")]
+    public List<ReferenceCollector> collectorList;
+
+    [LList("测试Array")]
+    public ReferenceCollector[] collectorArray;
+
     [LButton("测试")]
     private void Test()
     {

@@ -10,5 +10,10 @@ namespace Lanpa
             var window = GetWindow<TestWindow2>();
             window.Show();
         }
+
+        public void DoSomething()
+        {
+            var rc = _target;
+        }
     }
 }

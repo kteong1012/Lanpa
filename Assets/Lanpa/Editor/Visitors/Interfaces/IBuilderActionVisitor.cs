@@ -10,6 +10,7 @@
         void Accept(LDictionaryBuilder builder, A a);
         void Accept(LUnityObjectBuilder builder, A a);
         void Accept(LSerializedObjectBuilder builder, A a);
+        void Accept(LListBuilder builder, A a);
     }
 
     public interface IBuilderActionVisitor<A, B>
@@ -22,6 +23,7 @@
         void Accept(LDictionaryBuilder builder, A a, B b);
         void Accept(LUnityObjectBuilder builder, A a, B b);
         void Accept(LSerializedObjectBuilder builder, A a, B b);
+        void Accept(LListBuilder builder, A a, B b);
     }
 
     public interface IBuilderActionVisitor<A, B, C>
@@ -34,6 +36,7 @@
         void Accept(LDictionaryBuilder builder, A a, B b, C c);
         void Accept(LUnityObjectBuilder builder, A a, B b, C c);
         void Accept(LSerializedObjectBuilder builder, A a, B b, C c);
+        void Accept(LListBuilder builder, A a, B b, C c);
     }
 
     public interface IBuilderActionVisitor<A, B, C, D>
@@ -46,5 +49,6 @@
         void Accept(LDictionaryBuilder builder, A a, B b, C c, D d);
         void Accept(LUnityObjectBuilder builder, A a, B b, C c, D d);
         void Accept(LSerializedObjectBuilder builder, A a, B b, C c, D d);
+        void Accept(LListBuilder builder, A a, B b, C c, D d);
     }
 }

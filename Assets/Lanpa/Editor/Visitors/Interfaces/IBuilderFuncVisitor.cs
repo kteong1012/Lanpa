@@ -10,6 +10,7 @@
         T Accept(LDictionaryBuilder builder);
         T Accept(LUnityObjectBuilder builder);
         T Accept(LSerializedObjectBuilder builder);
+        T Accept(LListBuilder builder);
     }
 
     public interface IBuilderFuncVisitor<T, A>
@@ -22,6 +23,7 @@
         T Accept(LDictionaryBuilder builder, A a);
         T Accept(LUnityObjectBuilder builder, A a);
         T Accept(LSerializedObjectBuilder builder, A a);
+        T Accept(LListBuilder builder, A a);
     }
 
     public interface IBuilderFuncVisitor<T, A, B>
@@ -34,6 +36,7 @@
         T Accept(LDictionaryBuilder builder, A a, B b);
         T Accept(LUnityObjectBuilder builder, A a, B b);
         T Accept(LSerializedObjectBuilder builder, A a, B b);
+        T Accept(LListBuilder builder, A a, B b);
     }
 
     public interface IBuilderFuncVisitor<T, A, B, C>
@@ -46,6 +49,7 @@
         T Accept(LDictionaryBuilder builder, A a, B b, C c);
         T Accept(LUnityObjectBuilder builder, A a, B b, C c);
         T Accept(LSerializedObjectBuilder builder, A a, B b, C c);
+        T Accept(LListBuilder builder, A a, B b, C c);
     }
 
     public interface IBuilderFuncVisitor<T, A, B, C, D>
@@ -58,5 +62,6 @@
         T Accept(LDictionaryBuilder builder, A a, B b, C c, D d);
         T Accept(LUnityObjectBuilder builder, A a, B b, C c, D d);
         T Accept(LSerializedObjectBuilder builder, A a, B b, C c, D d);
+        T Accept(LListBuilder builder, A a, B b, C c, D d);
     }
 }

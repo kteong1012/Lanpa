@@ -3,17 +3,11 @@
 namespace Lanpa
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class LUnityObjectAttribute : LanpaAttribute
+    public class LListAttribute : LanpaAttribute
     {
-        public bool allowSceneObject;
-
-        public LUnityObjectAttribute(string label = null, bool allowSceneObject = false)
+        public LListAttribute(string label = null, int order = 0)
         {
-            this.label = label;
-            this.allowSceneObject = allowSceneObject;
         }
-
-
         public override T Apply<T, A>(IAttributeFuncVisitor<T, A> visitor, A a)
         {
             return visitor.Accept(this, a);

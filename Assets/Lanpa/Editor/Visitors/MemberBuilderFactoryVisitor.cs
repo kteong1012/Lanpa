@@ -45,5 +45,10 @@ namespace Lanpa
         {
             return new LSerializedObjectBuilder(memberInfo.GetMemberType(), attribute.order);
         }
+
+        public LanpaBuilderBase Accept(LListAttribute attribute, MemberInfo memberInfo)
+        {
+            return new LListBuilder(memberInfo.GetMemberType(), attribute.order);
+        }
     }
 }
