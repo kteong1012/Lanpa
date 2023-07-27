@@ -113,5 +113,16 @@ namespace Lanpa
             }
             return true;
         }
+
+        public bool Accept(LSerializedObjectAttribute attribute, MemberInfo a)
+        {
+            //检查是否有SerializeField特性
+            if (a is not FieldInfo fieldInfo || !fieldInfo.IsDefined(typeof(SerializeField), false))
+            {
+                Debug.LogWarning($"构建错误,{a.Name} 没有SerializeField特性");
+                return false;
+            }
+            return true;
+        }
     }
 }

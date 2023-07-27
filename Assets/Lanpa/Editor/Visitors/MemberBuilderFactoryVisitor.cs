@@ -40,5 +40,10 @@ namespace Lanpa
         {
             return new LUnityObjectBuilder(memberInfo.GetMemberType(), attribute.order, attribute.allowSceneObject);
         }
+
+        public LanpaBuilderBase Accept(LSerializedObjectAttribute attribute, MemberInfo memberInfo)
+        {
+            return new LSerializedObjectBuilder(memberInfo.GetMemberType(), attribute.order);
+        }
     }
 }

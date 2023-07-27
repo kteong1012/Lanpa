@@ -46,6 +46,10 @@ namespace Lanpa
 
         public static LanpaBuilderBase CreateElementBuilder(Type type)
         {
+            if (type == null)
+            {
+                return null;
+            }
             if (LanpaUtils.IsBaseType(type))
             {
                 return new LTextBuilder(type);
@@ -77,6 +81,11 @@ namespace Lanpa
             if (typeof(UnityEngine.Object).IsAssignableFrom(type))
             {
                 return new LUnityObjectBuilder(type, 0, false);
+            }
+            //SerializedAttribute
+            if (type.GetCustomAttribute<SerializableAttribute>() != null)
+            {
+                return new LSerializedObjectBuilder(type);
             }
             return null;
         }

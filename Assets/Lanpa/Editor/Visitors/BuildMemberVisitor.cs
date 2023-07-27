@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -30,14 +29,14 @@ namespace Lanpa
         {
             if (builder.InputText)
             {
-                var text = EditorGUILayout.TextField(label, memberInfo.GetValue(target).ToString());
+                var text = EditorGUILayout.TextField(label, memberInfo.GetValue(target)?.ToString());
                 memberInfo.SetValue(target, LanpaUtils.Convert(memberInfo.GetMemberType(), text));
             }
             else
             {
                 EditorGUILayout.BeginHorizontal();
                 EditorGUILayout.LabelField(label);
-                EditorGUILayout.LabelField(memberInfo.GetValue(target).ToString());
+                EditorGUILayout.LabelField(memberInfo.GetValue(target)?.ToString());
                 EditorGUILayout.EndHorizontal();
             }
         }
@@ -60,7 +59,6 @@ namespace Lanpa
         {
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(label);
-            //反射获取字典的Keys和Values
             var dict = builder.Apply(BuildValueVisitor.Instance, memberInfo.GetValue(target), 0);
             EditorGUILayout.EndHorizontal();
             memberInfo.SetValue(target, dict);
@@ -70,6 +68,15 @@ namespace Lanpa
         {
             var obj = target == null ? null : (UnityEngine.Object)memberInfo.GetValue(target);
             obj = EditorGUILayout.ObjectField(label, obj, memberInfo.GetMemberType(), true);
+            memberInfo.SetValue(target, obj);
+        }
+
+        public void Accept(LSerializedObjectBuilder builder, object target, string label, MemberInfo memberInfo)
+        {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField(label);
+            var obj = builder.Apply(BuildValueVisitor.Instance, memberInfo.GetValue(target), 0);
+            EditorGUILayout.EndHorizontal();
             memberInfo.SetValue(target, obj);
         }
     }

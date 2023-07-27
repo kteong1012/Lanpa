@@ -129,5 +129,19 @@ namespace Lanpa
             obj = EditorGUILayout.ObjectField(obj, builder.Type, true);
             return obj;
         }
+
+        public object Accept(LSerializedObjectBuilder builder, object value, int depth)
+        {
+            var obj = value ?? Activator.CreateInstance(builder.Type);
+            EditorGUILayout.BeginVertical();
+            foreach (var (label, memberInfo, fieldBuilder) in builder.Builders)
+            {
+                EditorGUILayout.BeginHorizontal();
+                fieldBuilder.Apply(BuildMemberVisitor.Instance, obj, label, memberInfo);
+                EditorGUILayout.EndHorizontal();
+            }
+            EditorGUILayout.EndVertical();
+            return obj;
+        }
     }
 }
