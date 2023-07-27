@@ -40,7 +40,10 @@ namespace Lanpa
             }
             if (memberInfo is PropertyInfo propertyInfo)
             {
-                propertyInfo.SetValue(target, value);
+                if (propertyInfo.CanWrite)
+                {
+                    propertyInfo.SetValue(target, value);
+                }
             }
         }
 

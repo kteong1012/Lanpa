@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Lanpa
 {
     public class LSerializedObjectBuilder : LanpaBuilderBase
     {
-        public List<(string label,MemberInfo memberInfo, LanpaBuilderBase builder)> Builders { get; }
+        public List<(string label, MemberInfo memberInfo, LanpaBuilderBase builder)> Builders { get; }
         public LSerializedObjectBuilder(Type type, int order = 0) : base(type, order)
         {
             Builders = new List<(string label, MemberInfo memberInfo, LanpaBuilderBase builder)>();
+            var members = type.GetMembers(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             //反射获取所有字段，并创建对应的LanpaBuilderBase
-            foreach (var memberInfo in type.GetMembers())
+            foreach (var memberInfo in members)
             {
                 //LIgnoreSerializedAttribute的字段不创建LFieldBuilder
                 if (memberInfo.IsDefined(typeof(LIgnoreSerializedAttribute), true))
@@ -28,6 +30,15 @@ namespace Lanpa
                 }
                 else
                 {
+                    if (memberInfo is FieldInfo fieldInfo && !fieldInfo.IsPublic)
+                    {
+                        continue;
+                    }
+                    if (memberInfo is PropertyInfo)
+                    {
+                        continue;
+                    }
+
                     //如果没有带有继承自LanpaAttribute特性的字段，创建对应的LFieldBuilder
                     var builder = LanpaEditorUtils.CreateElementBuilder(memberInfo.GetMemberType());
                     if (builder != null)
@@ -37,6 +48,9 @@ namespace Lanpa
                     }
                 }
             }
+            Builders = Builders
+                .OrderByDescending(pair => pair.builder.Order)
+                .ToList();
         }
 
         public override void Apply<A>(IBuilderActionVisitor<A> visitor, A a)

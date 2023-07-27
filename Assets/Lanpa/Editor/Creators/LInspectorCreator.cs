@@ -17,7 +17,7 @@ namespace Lanpa
         }
         protected Type _type;
         protected T _target;
-        private List<LanpaMemberInfo> _builderInfos;
+        private LSerializedObjectBuilder _builder;
 
         private void TryInit()
         {
@@ -29,26 +29,16 @@ namespace Lanpa
             {
                 _type = typeof(T);
             }
-            if (_builderInfos == null)
+            if (_builder == null)
             {
-                _builderInfos = _type.GetLanpaMembers()
-                    .OrderByDescending(pair => pair.attribute.order)
-                    .Select(pair =>
-                    {
-                        return new LanpaMemberInfo()
-                        {
-                            label = pair.attribute.label ?? pair.memberInfo.Name,
-                            memberInfo = pair.memberInfo,
-                            builder = pair.attribute.Apply(MemberBuilderFactoryVisitor.Instance, pair.memberInfo)
-                        };
-                    }).ToList();
+                _builder = new LSerializedObjectBuilder(_type);
             }
         }
         public override void OnInspectorGUI()
         {
             //记录当前的target状态，如果有改变就SetDirty
             EditorGUI.BeginChangeCheck();
-            DrawWindow();
+            DrawInspector();
             if (EditorGUI.EndChangeCheck())
             {
                 EditorUtility.SetDirty(target);
@@ -56,7 +46,7 @@ namespace Lanpa
         }
 
 
-        protected virtual void DrawWindow()
+        protected virtual void DrawInspector()
         {
             TryInit();
             if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
@@ -66,10 +56,12 @@ namespace Lanpa
                 GUI.FocusWindow(GetHashCode());
                 Repaint();
             }
-            foreach (var info in _builderInfos)
-            {
-                info.builder.Apply(BuildMemberVisitor.Instance, _target, info.label, info.memberInfo);
-            }
+            //创建一个控件，不可编辑的脚本，指向T类型，双击可以打开脚本
+            //字体颜色为蓝色
+            GUI.enabled = false;
+            EditorGUILayout.ObjectField("Script", MonoScript.FromMonoBehaviour(target as MonoBehaviour), typeof(MonoScript), false);
+            GUI.enabled = true;
+            _builder.Apply(BuildValueVisitor.Instance, _target, 0);
         }
     }
 }

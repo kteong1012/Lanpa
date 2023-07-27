@@ -47,3 +47,4 @@ MonoBehaviour:
   List:
   - key: 
     gameObject: {fileID: 0}
+  any: 0

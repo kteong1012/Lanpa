@@ -29,6 +29,9 @@ public class ReferenceCollector : MonoBehaviour, ISerializationCallbackReceiver
     public readonly Dictionary<string, ReferenceCollectorData> Dic = new Dictionary<string, ReferenceCollectorData>();
     [LList]
     public List<ReferenceCollectorData> List = new List<ReferenceCollectorData>();
+
+    public bool any = false;
+
     //使用泛型返回对应key的gameobject
     public T Get<T>(string key) where T : class
     {

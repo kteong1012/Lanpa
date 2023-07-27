@@ -17,7 +17,7 @@ namespace Lanpa
         }
         protected Type _type;
         protected T _target;
-        private List<LanpaMemberInfo> _builderInfos;
+        private LSerializedObjectBuilder _builder;
         private Vector2 _scrollPos;
 
         private void TryInit()
@@ -30,19 +30,9 @@ namespace Lanpa
             {
                 _type = typeof(T);
             }
-            if (_builderInfos == null)
+            if (_builder == null)
             {
-                _builderInfos = _type.GetLanpaMembers()
-                    .OrderByDescending(pair => pair.attribute.order)
-                    .Select(pair =>
-                    {
-                        return new LanpaMemberInfo()
-                        {
-                            label = pair.attribute.label ?? pair.memberInfo.Name,
-                            memberInfo = pair.memberInfo,
-                            builder = pair.attribute.Apply(MemberBuilderFactoryVisitor.Instance, pair.memberInfo)
-                        };
-                    }).ToList();
+                _builder = new LSerializedObjectBuilder(_type);
             }
         }
 
@@ -64,10 +54,7 @@ namespace Lanpa
             //创建一个和窗口一样高的滚动区域
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos, GUILayout.Width(position.width),
                                GUILayout.Height(position.height));
-            foreach (var info in _builderInfos)
-            {
-                info.builder.Apply(BuildMemberVisitor.Instance, _target, info.label, info.memberInfo);
-            }
+            _builder.Apply(BuildValueVisitor.Instance, _target, 0);
             EditorGUILayout.EndScrollView();
         }
     }
