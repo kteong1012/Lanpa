@@ -219,12 +219,13 @@ namespace Lanpa
                 if (builder.Elements == null)
                 {
                     builder.Elements = new List<object>();
-                    if (value != null)
+                }
+                builder.Elements.Clear();
+                if (value != null)
+                {
+                    for (int i = 0; i < array.Length; i++)
                     {
-                        for (int i = 0; i < array.Length; i++)
-                        {
-                            builder.Elements.Add(array.GetValue(i));
-                        }
+                        builder.Elements.Add(array.GetValue(i));
                     }
                 }
                 EditorGUILayout.BeginVertical(_boxStyle);
@@ -266,12 +267,13 @@ namespace Lanpa
                 if (builder.Elements == null)
                 {
                     builder.Elements = new List<object>();
-                    if (value != null)
+                }
+                builder.Elements.Clear();
+                if (value != null)
+                {
+                    for (int i = 0; i < list.Count; i++)
                     {
-                        for (int i = 0; i < list.Count; i++)
-                        {
-                            builder.Elements.Add(list[i]);
-                        }
+                        builder.Elements.Add(list[i]);
                     }
                 }
                 EditorGUILayout.BeginVertical(_boxStyle);

@@ -72,10 +72,15 @@ namespace Lanpa
             {
                 return new LDictionaryBuilder(type);
             }
-            //if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
-            //{
-            //    return new LListBuilder(type);
-            //}
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
+            {
+                return new LListBuilder(type);
+            }
+            //Array
+            if (type.IsArray)
+            {
+                return new LListBuilder(type);
+            }
             if (type == typeof(bool))
             {
                 return new LCheckBoxBuilder(type);

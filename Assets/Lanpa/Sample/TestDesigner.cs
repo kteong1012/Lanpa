@@ -44,13 +44,13 @@ public class TestDesigner
         { 2, new Dictionary<string, bool> { { "c", true }, { "d", false } } },
     };
     [LDictionary(label = "字典", order = 15)]
-    private Dictionary<int, Dictionary<string, GameObject>> dicObj = new();
+    private Dictionary<int, List<GameObject>> dicObj = new();
 
     [LUnityObject(label = "物体", order = 16, allowSceneObject = true)]
     private GameObject obj;
 
     [LList("测试List")]
-    public List<ReferenceCollector> collectorList;
+    public List<List<ReferenceCollector>> collectorList;
 
     [LList("测试Array")]
     public ReferenceCollector[] collectorArray;
