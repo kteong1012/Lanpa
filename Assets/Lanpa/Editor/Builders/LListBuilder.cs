@@ -8,6 +8,7 @@ namespace Lanpa
         public LanpaBuilderBase ElementBuilder { get; }
         public bool IsArray { get; }
         public List<object> Elements { get; set; }
+        public override bool MixedValue => false;
         public LListBuilder(Type type, int order) : base(type, order)
         {
             IsArray = type.IsArray;

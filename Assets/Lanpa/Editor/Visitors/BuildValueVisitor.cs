@@ -6,10 +6,11 @@ using System.Linq.Expressions;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace Lanpa
 {
-    public class BuildValueVisitor : IBuilderFuncVisitor<object, object, int>
+    public class BuildValueVisitor : IBuilderFuncVisitor<object, object>
     {
         public static BuildValueVisitor Instance { get; } = new BuildValueVisitor();
         private GUIStyle _boxStyle;
@@ -22,12 +23,12 @@ namespace Lanpa
             _boxStyle.padding = new RectOffset(10, 10, 10, 10);
 
         }
-        public object Accept(LButtonBuilder builder, object value, int depth)
+        public object Accept(LButtonBuilder builder, object value)
         {
             throw new NotSupportedException();
         }
 
-        public object Accept(LCheckBoxBuilder builder, object value, int depth)
+        public object Accept(LCheckBoxBuilder builder, object value)
         {
             var b = false;
             if (value != null)
@@ -38,7 +39,7 @@ namespace Lanpa
             return EditorGUILayout.Toggle(b);
         }
 
-        public object Accept(LTextBuilder builder, object value, int depth)
+        public object Accept(LTextBuilder builder, object value)
         {
             if (builder.InputText)
             {
@@ -54,7 +55,7 @@ namespace Lanpa
             }
         }
 
-        public object Accept(LDropDownBuilder builder, object value, int depth)
+        public object Accept(LDropDownBuilder builder, object value)
         {
             Enum.GetValues(builder.Type);
             var enumValue = value == null ? (Enum)Enum.GetValues(builder.Type).GetValue(0) : (Enum)value;
@@ -63,14 +64,14 @@ namespace Lanpa
             return enumValue;
         }
 
-        public object Accept(LMultiDropDownBuilder builder, object value, int depth)
+        public object Accept(LMultiDropDownBuilder builder, object value)
         {
             var enumValue = value == null ? (Enum)Enum.GetValues(builder.Type).GetValue(0) : (Enum)value;
             enumValue = EditorGUILayout.EnumFlagsField(enumValue);
             return enumValue;
         }
 
-        public object Accept(LDictionaryBuilder builder, object value, int depth)
+        public object Accept(LDictionaryBuilder builder, object value)
         {
             var dict = value == null ? (IDictionary)Activator.CreateInstance(builder.Type) : (IDictionary)value;
             if (builder.Keys == null || builder.Values == null)
@@ -100,7 +101,7 @@ namespace Lanpa
                 {
                     GUI.color = Color.red;
                 }
-                builder.Keys[i] = builder.KeyBuilder.Apply(this, builder.Keys[i], depth + 1);
+                builder.Keys[i] = builder.KeyBuilder.Apply(this, builder.Keys[i]);
                 GUI.color = Color.white;
                 if (GUILayout.Button("-", GUILayout.Width(25), GUILayout.Height(25)))
                 {
@@ -108,7 +109,7 @@ namespace Lanpa
                     builder.Values.RemoveAt(i);
                     i--;
                 }
-                builder.Values[i] = builder.ValueBuilder.Apply(this, builder.Values[i], depth + 1);
+                builder.Values[i] = builder.ValueBuilder.Apply(this, builder.Values[i]);
                 EditorGUILayout.EndHorizontal();
             }
             if (GUILayout.Button("+", GUILayout.Width(25), GUILayout.Height(25)))
@@ -134,28 +135,77 @@ namespace Lanpa
             return dict;
         }
 
-        public object Accept(LUnityObjectBuilder builder, object value, int depth)
+        public object Accept(LUnityObjectBuilder builder, object value)
         {
             var obj = value == null ? null : (UnityEngine.Object)value;
             obj = EditorGUILayout.ObjectField(obj, builder.Type, true);
             return obj;
         }
 
-        public object Accept(LSerializedObjectBuilder builder, object value, int depth)
+        public object Accept(LSerializedObjectBuilder builder, object value)
         {
-            var obj = value ?? Activator.CreateInstance(builder.Type);
-            EditorGUILayout.BeginVertical(_boxStyle);
-            foreach (var (label, memberInfo, fieldBuilder) in builder.Builders)
+            var targets = value as UnityEngine.Object[];
+            if (targets != null && targets.Length > 1)
             {
-                EditorGUILayout.BeginHorizontal();
-                fieldBuilder.Apply(BuildMemberVisitor.Instance, obj, label, memberInfo);
-                EditorGUILayout.EndHorizontal();
+                var firstObj = targets[0];
+                EditorGUILayout.BeginVertical(_boxStyle);
+                foreach (var (label, memberInfo, fieldBuilder) in builder.Builders)
+                {
+                    if (!fieldBuilder.MixedValue)
+                    {
+                        continue;
+                    }
+                    EditorGUILayout.BeginHorizontal();
+                    //label的宽度为100
+                    EditorGUILayout.LabelField(label, GUILayout.Width(100));
+                    if (targets.All(x => memberInfo.GetValue(x).Equals(memberInfo.GetValue(firstObj))))
+                    {
+                        EditorGUI.showMixedValue = false;
+                    }
+                    else
+                    {
+                        EditorGUI.showMixedValue = true;
+                    }
+
+                    EditorGUI.BeginChangeCheck();
+                    var val = fieldBuilder.Apply(this, memberInfo.GetValue(firstObj));
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        foreach (var obj in targets)
+                        {
+                            memberInfo.SetValue(obj, val);
+                        }
+                    }
+                    EditorGUI.showMixedValue = false;
+                    EditorGUILayout.EndHorizontal();
+                }
+                EditorGUILayout.EndVertical();
+                return firstObj;
             }
-            EditorGUILayout.EndVertical();
-            return obj;
+            else
+            {
+                object obj = null;
+                if (targets != null)
+                {
+                    obj = targets[0];
+                }
+                else
+                {
+                    obj = value ?? Activator.CreateInstance(builder.Type);
+                }
+                EditorGUILayout.BeginVertical(_boxStyle);
+                foreach (var (label, memberInfo, fieldBuilder) in builder.Builders)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    fieldBuilder.Apply(BuildMemberVisitor.Instance, obj, label, memberInfo);
+                    EditorGUILayout.EndHorizontal();
+                }
+                EditorGUILayout.EndVertical();
+                return obj;
+            }
         }
 
-        public object Accept(LListBuilder builder, object value, int depth)
+        public object Accept(LListBuilder builder, object value)
         {
             if (builder.IsArray)
             {
@@ -181,7 +231,7 @@ namespace Lanpa
                     EditorGUILayout.BeginHorizontal();
                     //显示索引[i]
                     EditorGUILayout.LabelField($"[{i}]", GUILayout.Width(25));
-                    builder.Elements[i] = builder.ElementBuilder.Apply(this, builder.Elements[i], depth + 1);
+                    builder.Elements[i] = builder.ElementBuilder.Apply(this, builder.Elements[i]);
                     if (GUILayout.Button("-", GUILayout.Width(25), GUILayout.Height(25)))
                     {
                         builder.Elements.RemoveAt(i);
@@ -228,7 +278,7 @@ namespace Lanpa
                     EditorGUILayout.BeginHorizontal();
                     //显示索引[i]
                     EditorGUILayout.LabelField($"[{i}]", GUILayout.Width(25));
-                    builder.Elements[i] = builder.ElementBuilder.Apply(this, builder.Elements[i], depth + 1);
+                    builder.Elements[i] = builder.ElementBuilder.Apply(this, builder.Elements[i]);
                     if (GUILayout.Button("-", GUILayout.Width(25), GUILayout.Height(25)))
                     {
                         builder.Elements.RemoveAt(i);

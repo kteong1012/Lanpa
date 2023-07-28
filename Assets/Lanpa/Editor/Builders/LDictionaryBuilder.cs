@@ -17,6 +17,7 @@ namespace Lanpa
         public LanpaBuilderBase ValueBuilder { get; }
         public List<object> Keys { get; set; }
         public List<object> Values { get; set; }
+        public override bool MixedValue => false;
 
         public override void Apply<A>(IBuilderActionVisitor<A> visitor, A a)
         {

@@ -59,12 +59,13 @@ namespace Lanpa
             NormalProcess(builder, target, label, memberInfo);
         }
 
-        private void NormalProcess(LanpaBuilderBase builder,object target, string label, MemberInfo memberInfo)
+        private void NormalProcess(LanpaBuilderBase builder, object target, string label, MemberInfo memberInfo)
         {
             EditorGUILayout.BeginHorizontal();
             //label的宽度为100
             EditorGUILayout.LabelField(label, GUILayout.Width(100));
-            var obj = builder.Apply(BuildValueVisitor.Instance, memberInfo.GetValue(target), 0);
+
+            var obj = builder.Apply(BuildValueVisitor.Instance, memberInfo.GetValue(target));
             EditorGUILayout.EndHorizontal();
             memberInfo.SetValue(target, obj);
         }

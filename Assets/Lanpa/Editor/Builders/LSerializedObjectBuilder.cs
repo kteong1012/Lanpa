@@ -7,6 +7,7 @@ namespace Lanpa
 {
     public class LSerializedObjectBuilder : LanpaBuilderBase
     {
+        public override bool MixedValue => false;
         public List<(string label, MemberInfo memberInfo, LanpaBuilderBase builder)> Builders { get; }
         public LSerializedObjectBuilder(Type type, int order = 0) : base(type, order)
         {

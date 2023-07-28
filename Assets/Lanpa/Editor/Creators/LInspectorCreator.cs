@@ -36,9 +36,14 @@ namespace Lanpa
         }
         public override void OnInspectorGUI()
         {
+            //记录撤回状态
+            Undo.RecordObject(target, "Inspector");
+
             //记录当前的target状态，如果有改变就SetDirty
             EditorGUI.BeginChangeCheck();
             DrawInspector();
+
+
             if (EditorGUI.EndChangeCheck())
             {
                 EditorUtility.SetDirty(target);
@@ -61,7 +66,7 @@ namespace Lanpa
             GUI.enabled = false;
             EditorGUILayout.ObjectField("Script", MonoScript.FromMonoBehaviour(target as MonoBehaviour), typeof(MonoScript), false);
             GUI.enabled = true;
-            _builder.Apply(BuildValueVisitor.Instance, _target, 0);
+            BuildValueVisitor.Instance.Accept(_builder, targets);
         }
     }
 }

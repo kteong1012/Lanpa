@@ -56,7 +56,7 @@ namespace Lanpa
             //创建一个和窗口一样高的滚动区域
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos, GUILayout.Width(position.width),
                                GUILayout.Height(position.height));
-            _builder.Apply(BuildValueVisitor.Instance, _target, 0);
+            _builder.Apply(BuildValueVisitor.Instance, _target);
             EditorGUILayout.EndScrollView();
         }
     }

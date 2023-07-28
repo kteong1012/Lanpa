@@ -10,7 +10,9 @@ namespace Lanpa
         public Type Type { get; }
         public int Order { get; }
 
-        public LanpaBuilderBase(Type type,int order)
+        public virtual bool MixedValue { get; } = true;
+
+        public LanpaBuilderBase(Type type, int order)
         {
             Type = type;
             Order = order;
