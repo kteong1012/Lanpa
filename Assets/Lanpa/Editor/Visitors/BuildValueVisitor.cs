@@ -96,6 +96,7 @@ namespace Lanpa
             EditorGUILayout.BeginVertical(_boxStyle);
             for (int i = 0; i < builder.Keys.Count; i++)
             {
+
                 EditorGUILayout.BeginHorizontal();
                 if (duplicateKeys.Contains(i))
                 {
@@ -103,13 +104,14 @@ namespace Lanpa
                 }
                 builder.Keys[i] = builder.KeyBuilder.Apply(this, builder.Keys[i]);
                 GUI.color = Color.white;
-                if (GUILayout.Button("-", GUILayout.Width(25), GUILayout.Height(25)))
+                var clickRemove = GUILayout.Button("-", GUILayout.Width(25), GUILayout.Height(25));
+                builder.Values[i] = builder.ValueBuilder.Apply(this, builder.Values[i]);
+                if (clickRemove)
                 {
                     builder.Keys.RemoveAt(i);
                     builder.Values.RemoveAt(i);
                     i--;
                 }
-                builder.Values[i] = builder.ValueBuilder.Apply(this, builder.Values[i]);
                 EditorGUILayout.EndHorizontal();
             }
             if (GUILayout.Button("+", GUILayout.Width(25), GUILayout.Height(25)))
