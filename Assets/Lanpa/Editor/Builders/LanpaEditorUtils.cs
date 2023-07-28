@@ -97,5 +97,17 @@ namespace Lanpa
             }
             return null;
         }
+
+        internal static object CreateDefault(this Type type)
+        {
+            if (type.IsClass)
+            {
+                return null;
+            }
+            else
+            {
+                return Activator.CreateInstance(type);
+            }
+        }
     }
 }

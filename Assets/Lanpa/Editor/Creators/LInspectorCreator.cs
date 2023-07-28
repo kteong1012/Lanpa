@@ -39,12 +39,11 @@ namespace Lanpa
             //记录撤回状态
             Undo.RecordObject(target, "Inspector");
 
-            //记录当前的target状态，如果有改变就SetDirty
-            EditorGUI.BeginChangeCheck();
+            serializedObject.Update();
             DrawInspector();
+            serializedObject.ApplyModifiedProperties();
 
-
-            if (EditorGUI.EndChangeCheck())
+            if (GUI.changed)
             {
                 EditorUtility.SetDirty(target);
             }

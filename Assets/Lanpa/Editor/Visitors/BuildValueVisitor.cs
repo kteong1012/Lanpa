@@ -2,11 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 namespace Lanpa
 {
@@ -76,18 +73,17 @@ namespace Lanpa
             var dict = value == null ? (IDictionary)Activator.CreateInstance(builder.Type) : (IDictionary)value;
             if (builder.Keys == null || builder.Values == null)
             {
-                builder.Keys = new List<object>();
-                builder.Values = new List<object>();
+                builder.Keys = new List<(object key, LanpaBuilderBase builder)>();
+                builder.Values = new List<(object value, LanpaBuilderBase builder)>();
 
                 var iter = dict.GetEnumerator();
                 while (iter.MoveNext())
                 {
-                    builder.Keys.Add(iter.Key);
-                    builder.Values.Add(iter.Value);
+                    builder.Add(iter.Key, iter.Value);
                 }
             }
             //获取Keys的所有重复项
-            var duplicateKeys = builder.Keys.Select((element, index) => new { Element = element, Index = index })
+            var duplicateKeys = builder.Keys.Select((element, index) => new { Element = element.key, Index = index })
                             .GroupBy(item => item.Element)
                             .Where(group => group.Count() > 1)
                             .SelectMany(group => group.Skip(1).Select(item => item.Index))
@@ -96,16 +92,18 @@ namespace Lanpa
             EditorGUILayout.BeginVertical(_boxStyle);
             for (int i = 0; i < builder.Keys.Count; i++)
             {
-
                 EditorGUILayout.BeginHorizontal();
                 if (duplicateKeys.Contains(i))
                 {
                     GUI.color = Color.red;
                 }
-                builder.Keys[i] = builder.KeyBuilder.Apply(this, builder.Keys[i]);
+                var key = builder.Keys[i];
+                var val = builder.Values[i];
+                builder.Keys[i] = (key.builder.Apply(this, builder.Keys[i].key), key.builder);
                 GUI.color = Color.white;
                 var clickRemove = GUILayout.Button("-", GUILayout.Width(25), GUILayout.Height(25));
-                builder.Values[i] = builder.ValueBuilder.Apply(this, builder.Values[i]);
+                GUILayout.FlexibleSpace();
+                builder.Values[i] = (val.builder.Apply(this, builder.Values[i].value), val.builder);
                 if (clickRemove)
                 {
                     builder.Keys.RemoveAt(i);
@@ -116,8 +114,7 @@ namespace Lanpa
             }
             if (GUILayout.Button("+", GUILayout.Width(25), GUILayout.Height(25)))
             {
-                builder.Keys.Add(null);
-                builder.Values.Add(null);
+                builder.Add(builder.KeyBuilder.Type.CreateDefault(), builder.ValueBuilder.Type.CreateDefault());
             }
             EditorGUILayout.EndVertical();
             //用linq判断keys有没有重复项
@@ -128,11 +125,15 @@ namespace Lanpa
             dict.Clear();
             for (int i = 0; i < builder.Keys.Count; i++)
             {
-                if (builder.Keys[i] == null)
+                if (builder.Keys[i].key == null)
                 {
                     continue;
                 }
-                dict.Add(builder.Keys[i], builder.Values[i]);
+                if (dict.Contains(builder.Keys[i].key))
+                {
+                    continue;
+                }
+                dict.Add(builder.Keys[i].key, builder.Values[i].value);
             }
             return dict;
         }
@@ -244,7 +245,7 @@ namespace Lanpa
                 }
                 if (GUILayout.Button("+", GUILayout.Width(25), GUILayout.Height(25)))
                 {
-                    builder.Elements.Add(null);
+                    builder.Elements.Add(builder.ElementBuilder.Type.CreateDefault());
                 }
                 EditorGUILayout.EndVertical();
                 if (builder.Elements.Count != array.Length)
@@ -292,7 +293,7 @@ namespace Lanpa
                 }
                 if (GUILayout.Button("+", GUILayout.Width(25), GUILayout.Height(25)))
                 {
-                    builder.Elements.Add(null);
+                    builder.Elements.Add(builder.ElementBuilder.Type.CreateDefault());
                 }
                 EditorGUILayout.EndVertical();
                 if (builder.Elements.Count != list.Count)

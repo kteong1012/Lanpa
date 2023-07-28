@@ -15,9 +15,23 @@ namespace Lanpa
         }
         public LanpaBuilderBase KeyBuilder { get; }
         public LanpaBuilderBase ValueBuilder { get; }
-        public List<object> Keys { get; set; }
-        public List<object> Values { get; set; }
+        public List<(object key, LanpaBuilderBase builder)> Keys { get; internal set; }
+        public List<(object value, LanpaBuilderBase builder)> Values { get; internal set; }
         public override bool MixedValue => false;
+
+        public void Add(object key, object value)
+        {
+            var keyBuilder = LanpaEditorUtils.CreateElementBuilder(KeyBuilder.Type);
+            var valueBuilder = LanpaEditorUtils.CreateElementBuilder(ValueBuilder.Type);
+            Keys.Add((key, keyBuilder));
+            Values.Add((value, valueBuilder));
+        }
+
+        public void RemoveAt(int index)
+        {
+            Keys.RemoveAt(index);
+            Values.RemoveAt(index);
+        }
 
         public override void Apply<A>(IBuilderActionVisitor<A> visitor, A a)
         {

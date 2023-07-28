@@ -11,7 +11,7 @@ public class ReferenceCollectorData
 {
     public string key;
     //Object并非C#基础中的Object，而是 UnityEngine.Object
-    public Object gameObject;
+    public GameObject gameObject;
 }
 //继承IComparer对比器，Ordinal会使用序号排序规则比较字符串，因为是byte级别的比较，所以准确性和性能都不错
 public class ReferenceCollectorDataComparer : IComparer<ReferenceCollectorData>
@@ -22,36 +22,43 @@ public class ReferenceCollectorDataComparer : IComparer<ReferenceCollectorData>
     }
 }
 
+[Serializable]
+public struct Pairs
+{
+    public string key;
+    public ReferenceCollectorData referenceCollectorData;
+}
+
 public class ReferenceCollector : MonoBehaviour, ISerializationCallbackReceiver
 {
     //Object并非C#基础中的Object，而是 UnityEngine.Object
-    [LDictionary]
-    public readonly Dictionary<string, ReferenceCollectorData> Dic = new Dictionary<string, ReferenceCollectorData>();
+    [LList]
+    public readonly List<Pairs> Dic = new List<Pairs>();
     [LList]
     public List<ReferenceCollectorData> List = new List<ReferenceCollectorData>();
 
     public bool any = false;
 
     //使用泛型返回对应key的gameobject
-    public T Get<T>(string key) where T : class
-    {
-        ReferenceCollectorData dictGo;
-        if (!Dic.TryGetValue(key, out dictGo))
-        {
-            return null;
-        }
-        return dictGo.gameObject as T;
-    }
+    //public T Get<T>(string key) where T : class
+    //{
+    //    ReferenceCollectorData dictGo;
+    //    if (!Dic.TryGetValue(key, out dictGo))
+    //    {
+    //        return null;
+    //    }
+    //    return dictGo.gameObject as T;
+    //}
 
-    public Object GetObject(string key)
-    {
-        ReferenceCollectorData dictGo;
-        if (!Dic.TryGetValue(key, out dictGo))
-        {
-            return null;
-        }
-        return dictGo.gameObject;
-    }
+    //public Object GetObject(string key)
+    //{
+    //    ReferenceCollectorData dictGo;
+    //    if (!Dic.TryGetValue(key, out dictGo))
+    //    {
+    //        return null;
+    //    }
+    //    return dictGo.gameObject;
+    //}
 
     public void OnBeforeSerialize()
     {

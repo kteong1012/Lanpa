@@ -45,6 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   List:
-  - key: 
+  - key: 123
     gameObject: {fileID: 0}
-  any: 0
+  any: 1
